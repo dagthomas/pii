@@ -79,6 +79,40 @@
 	function run() {
 		void engine.redact(input);
 	}
+
+	/** The redacted text is still in the DOM — it is only painted over, so that hovering a bar
+	 *  can reveal it. That means a plain copy would put the real PII on the clipboard, which
+	 *  defeats the point of the tool. Rewrite the clipboard payload so every redacted span
+	 *  leaves as its <LABEL> placeholder instead. */
+	function handleCopy(event: ClipboardEvent) {
+		const selection = window.getSelection();
+		if (!selection || selection.isCollapsed || !event.clipboardData) return;
+
+		const placeholder = (el: Element) => `<${(el.getAttribute('data-label') ?? 'redacted').toUpperCase()}>`;
+
+		let out = '';
+		for (let i = 0; i < selection.rangeCount; i++) {
+			const range = selection.getRangeAt(i);
+			// A selection that starts AND ends inside one bar clones as bare text with no <mark>
+			// around it — that path has to be caught explicitly or it leaks the whole word.
+			const node = range.commonAncestorContainer;
+			const host = (node.nodeType === Node.ELEMENT_NODE ? (node as Element) : node.parentElement)?.closest('mark');
+			if (host) {
+				out += placeholder(host);
+				continue;
+			}
+			const fragment = range.cloneContents();
+			// A partially-selected bar still clones as a <mark>, so replacing the element covers
+			// partial selections too — never a substring of the real value.
+			for (const el of fragment.querySelectorAll('mark')) {
+				el.replaceWith(document.createTextNode(placeholder(el)));
+			}
+			out += fragment.textContent ?? '';
+		}
+
+		event.clipboardData.setData('text/plain', out);
+		event.preventDefault();
+	}
 </script>
 
 <svelte:head><title>Redactor in the Browser</title></svelte:head>
@@ -135,7 +169,7 @@
 	{#if engine.analyzedText}
 		<section aria-label="Redacted result">
 			<h2>Result <span class="count">{engine.spans.length} redaction{engine.spans.length === 1 ? '' : 's'}</span></h2>
-			<div class="result">
+			<div class="result" oncopy={handleCopy}>
 				{#each pieces as p (p.key)}
 					{#if p.span}
 						<mark data-label={p.span.label} title="{LABEL_NAMES[p.span.label]} · via {p.span.source}"
@@ -145,8 +179,9 @@
 				{/each}
 			</div>
 			<p class="hint">
-				Hover a bar to see the category and which detector fired. Company org numbers and
-				switchboards are deliberately left alone.{#if mode === 'nordic' && nordic.truncated}
+				Hover a bar to see the category and which detector fired. Copying from this box gives
+				you <span class="mono">&lt;PERSON&gt;</span>-style placeholders, never the hidden text.
+				Company org numbers and switchboards are deliberately left alone.{#if mode === 'nordic' && nordic.truncated}
 					<strong>Input was longer than nordic-v9's 1,024-token window; only the first part was analysed.</strong>{/if}
 			</p>
 		</section>
