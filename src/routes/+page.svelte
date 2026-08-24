@@ -2,6 +2,7 @@
 	import { RedactorEngine } from '$lib/RedactorEngine.svelte';
 	import { NordicEngine } from '$lib/nordic/NordicEngine.svelte';
 	import LoadPanel from '$lib/LoadPanel.svelte';
+	import SpecPanel from '$lib/SpecPanel.svelte';
 	import type { Span } from '$lib/detectors';
 
 	const fast = new RedactorEngine();
@@ -102,6 +103,8 @@
 		<LoadPanel {engine} />
 	{/if}
 
+	<SpecPanel {mode} {engine} />
+
 	<div class="samples">
 		{#each SAMPLES as s (s.id)}
 			<button class="chip" onclick={() => (input = s.text)}>{s.name}</button>
@@ -134,17 +137,19 @@
 		<p>
 			<strong>Two engines, both fully in your browser.</strong>
 			<span class="mono">Fast demo</span>: a small multilingual NER model
-			(<span class="mono">distilbert-ner-hrl</span>, ~65&nbsp;MB) for names, plus pattern + checksum
-			detectors (fødselsnummer mod-11, personnummer Luhn, IBAN mod-97) mirroring the production
-			label policy — quick to load, weaker on Nordic names.
+			(<span class="mono">distilbert-base-multilingual-cased-ner-hrl</span>, ~65&nbsp;MB) for names,
+			plus pattern + checksum detectors (fødselsnummer mod-11, personnummer Luhn, IBAN mod-97)
+			mirroring the production label policy — quick to load, weaker on Nordic names.
 		</p>
 		<p>
-			<strong><span class="mono">nordic-v9</span> is the production model itself</strong> — the custom
-			1.4B mixture-of-experts network, exported to ONNX with int8 expert weights (~1.9&nbsp;GB,
-			downloaded once, cached by the browser) and run on your GPU via WebGPU (WASM fallback).
-			It agrees with the server model on 99.96% of tokens. Two caveats vs the server: spans are
-			decoded greedily here (the server uses Viterbi decoding, slightly cleaner boundaries), and
-			input is capped at 1,024 tokens per run.
+			<strong><span class="mono">nordic-v9</span> is the production model itself</strong> — a custom
+			1.4B mixture-of-experts network <strong>fine-tuned from
+			<a href="https://huggingface.co/openai/privacy-filter" target="_blank" rel="noopener">OpenAI's
+			privacy-filter</a></strong> on Nordic HR/support text, exported to ONNX with int8 expert weights
+			(~1.9&nbsp;GB, downloaded once and cached in your browser) and run on your GPU via WebGPU
+			(WASM fallback). It agrees with the server model on 99.96% of tokens. Two caveats vs the
+			server: spans are decoded greedily here (the server uses Viterbi decoding, slightly cleaner
+			boundaries), and input is capped at 1,024 tokens per run.
 		</p>
 	</footer>
 </main>

@@ -10,6 +10,8 @@ export class NordicEngine {
 	phase = $state<'download' | 'prepare' | null>(null);
 	busy = $state(false);
 	lastMs = $state<number | null>(null);
+	lastTokens = $state<number | null>(null);
+	loadMs = $state<number | null>(null);
 	spans = $state.raw<Span[]>([]);
 	analyzedText = $state('');
 
@@ -35,6 +37,7 @@ export class NordicEngine {
 			} else if (m.type === 'ready') {
 				this.status = 'ready';
 				this.device = m.device;
+				this.loadMs = m.loadMs ?? null;
 				this.progress = '';
 				this.phase = null;
 			} else if (m.type === 'error') {
@@ -42,6 +45,7 @@ export class NordicEngine {
 				this.progress = m.message;
 			} else if (m.type === 'result') {
 				this.lastMs = m.ms;
+				this.lastTokens = m.tokens ?? null;
 				this.#resolve?.(m.spans);
 				this.#resolve = null;
 			}

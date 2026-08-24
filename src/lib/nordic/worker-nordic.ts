@@ -56,17 +56,48 @@ async function contentMb(url: string): Promise<number> {
 	}
 }
 
+const CACHE_NAME = 'nordic-v9-model-v1';
+
+/** Cache Storage persists multi-GB across sessions (HTTP cache rejects a 1.8 GB file).
+ *  Returns the cached bytes if present, else fetches with progress and stores them. */
+async function cachedFetch(url: string, totalMb: number): Promise<Uint8Array | null> {
+	let cache: Cache | null = null;
+	try {
+		cache = await caches.open(CACHE_NAME);
+		const hit = await cache.match(url);
+		if (hit) {
+			downloadedMb += (Number(hit.headers.get('x-size')) || 0) / 1e6;
+			postMessage({ type: 'progress', pct: 100, mb: Math.round(downloadedMb) });
+			return new Uint8Array(await hit.arrayBuffer());
+		}
+	} catch {
+		/* Cache API unavailable (private mode / quota) — fall through to plain fetch */
+	}
+	const bytes = await fetchWithProgress(url, totalMb);
+	if (bytes && cache) {
+		try {
+			await cache.put(
+				url,
+				new Response(bytes.slice().buffer, { headers: { 'x-size': String(bytes.length) } })
+			);
+		} catch {
+			/* over quota — serving from memory this session is fine */
+		}
+	}
+	return bytes;
+}
+
 async function load() {
 	enc = new Tiktoken(o200k);
 	postMessage({ type: 'log', message: 'tokenizer ready' });
 	const dataUrl = MODEL_URL + '.data';
 	const totalMb = (await contentMb(MODEL_URL)) + (await contentMb(dataUrl));
-	const bytes = await fetchWithProgress(MODEL_URL, totalMb);
+	const bytes = await cachedFetch(MODEL_URL, totalMb);
 	if (!bytes) {
 		postMessage({ type: 'error', message: `model not found at ${MODEL_URL}` });
 		return;
 	}
-	const ext = await fetchWithProgress(dataUrl, totalMb);
+	const ext = await cachedFetch(dataUrl, totalMb);
 	const dataFile = dataUrl.split('/').pop()!;
 	postMessage({ type: 'preparing' });
 	for (const dev of ['webgpu', 'wasm'] as const) {
@@ -131,6 +162,7 @@ onmessage = async (e: MessageEvent) => {
 			id: msg.id,
 			spans,
 			ms: Math.round(performance.now() - t0),
+			tokens: ids.length,
 			truncated: allIds.length > MAX_TOKENS
 		});
 	}
