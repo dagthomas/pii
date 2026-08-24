@@ -7,7 +7,7 @@ Two engines, selectable on both pages, everything fully client-side:
 - **nordic-v9** — the actual production model (custom 1.4B MoE), exported to ONNX
   with int8 expert weights (~1.9 GB, `static/models/`, downloaded once and cached),
   running via onnxruntime-web on WebGPU with WASM fallback. 99.96% token agreement
-  with the server model; ~0.5 s/ticket on WebGPU after warm-up. Greedy span
+  with the server model; ~0.5 s per document on WebGPU after warm-up. Greedy span
   decoding (server uses Viterbi); 1,024-token cap per run. Sources in
   `src/lib/nordic/`; model rebuild: `export_onnx_q8.py` in the training repo.
 
@@ -19,7 +19,7 @@ Nordic structured PII. No text ever leaves the machine — the page works offlin
 the model is downloaded and cached.
 
 Measured on a dev box: model load from cache < 2 s, inference 150–1000 ms per
-ticket on WebGPU.
+document on WebGPU.
 
 ## What detects what
 
@@ -37,9 +37,9 @@ hides how good the model actually is. Model gaps get fixed by retraining — see
 ## Casing
 
 Both models are fine-tuned from *cased* backbones, and the corpus was ~99% properly cased,
-so all-lowercase tickets used to lose names and miss street addresses entirely.
+so all-lowercase input used to lose names and miss street addresses entirely.
 `nordic-ner` was retrained (2026-08-24) with lowercase / sentence-case / uppercase copies
-of every span-bearing training example. On the blind set of real tickets, scored both ways:
+of every span-bearing training example. On the held-out set, scored both ways:
 
 | | cased | lowercased |
 |---|---|---|
@@ -59,7 +59,7 @@ Two caveats worth stating plainly:
 
 - **`private_address`, `private_url` and `secret` have never been evaluated on real data.**
   Every real held-out set contains zero address spans, so the headline "F1 0.94 across all
-  nine PII types" really covers the ~6 types the blind sets actually contain. The address
+  nine PII types" really covers the ~6 types the held-out sets actually contain. The address
   numbers above the fold come from a held-out *synthetic* set.
 - `nordic-v9` decodes spans greedily in the browser (the server uses Viterbi) and caps
   input at 1,024 tokens per run. `nordic-ner` windows longer input instead of truncating.
@@ -71,7 +71,7 @@ text (columns named message/text/body/… are preselected), and every cell is
 redacted in-browser with a progress bar and cancel. Download comes back in the
 same format (`*.redacted.csv` / `*.redacted.xlsx`; for Excel, other sheets are
 preserved and a sheet picker appears for multi-sheet workbooks). A
-"Load sample tickets" button and a downloadable `sample-tickets.csv` are built
+"Load sample rows" button and a downloadable `sample-data.csv` are built
 in for trying it without your own data. Options: header-row toggle, NER on/off
 (off = checksum/pattern detectors only, much faster for huge files).
 

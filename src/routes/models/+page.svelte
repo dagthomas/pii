@@ -4,8 +4,7 @@
 	<p class="eyebrow">the models</p>
 	<h1>Three tools, one training pipeline</h1>
 	<p class="lede">
-		Every model here was trained on the <strong>same data</strong> — synthetic Nordic HR/support text
-		(checksum-valid IDs, names from national statistics) plus 1,300 hand-labelled real tickets — under the
+		Every model here was trained on the <strong>same data</strong> and under the
 		<strong>same label policy</strong>. They differ only in size, speed, and where they run.
 	</p>
 
@@ -39,7 +38,7 @@
 			</tbody>
 		</table>
 	</div>
-	<p class="fn">*Span-F1 on blind real tickets never seen in training. The two models use different eval granularities, so treat these as ballpark, not a head-to-head — see notes below.</p>
+	<p class="fn">*Span-F1 on held-out Nordic text never seen in training. The two models use different eval granularities, so treat these as ballpark, not a head-to-head — see notes below.</p>
 
 	<h2>When to use what</h2>
 
@@ -49,7 +48,7 @@
 			<h3>nordic-ner</h3>
 			<p>
 				Our own 135 MB model. Small enough to load fast and run on any laptop GPU or CPU, yet it scored
-				<b>0.95 span-F1</b> on blind tickets — and <b>0.94 on the same tickets lowercased</b>,
+				<b>0.95 span-F1</b> on held-out text — and <b>0.94 on the same text lowercased</b>,
 				after a case-augmented retrain. This is the one for
 				<strong>redacting whole spreadsheets locally</strong> — drop in a CSV or Excel file, redact every
 				cell in the browser, download it back, and <strong>nothing ever leaves the machine</strong>. Perfect
@@ -62,7 +61,7 @@
 			<p>
 				The 1.4B flagship, fine-tuned from OpenAI's privacy-filter. Most robust on the hardest cases —
 				first names mid-sentence, unusual formats, tricky prose. Use it in the <strong>server pipeline</strong>
-				(scrubbing tickets before an LLM sees them, ~16 ms/ticket on a GPU) or in the browser when you want
+				(scrubbing text before an LLM sees it, ~16 ms per document on a GPU) or in the browser when you want
 				the best possible detection and can spend the one-time 1.9 GB download.
 			</p>
 		</div>
@@ -82,13 +81,13 @@
 	<h2>The short version</h2>
 	<ul class="pick">
 		<li><strong>Cleaning a CSV/Excel export on your own machine?</strong> → <b>nordic-ner</b> (fast, local, all nine types).</li>
-		<li><strong>Scrubbing tickets in a server pipeline before an LLM?</strong> → <b>nordic-v9</b> on the server.</li>
+		<li><strong>Scrubbing text in a server pipeline before an LLM?</strong> → <b>nordic-v9</b> on the server.</li>
 		<li><strong>Need certainty on IDs, phones, IBANs?</strong> → <b>checksum detectors</b> — always running under both.</li>
 		<li><strong>Want the best detection with zero infrastructure?</strong> → <b>nordic-v9</b> in the browser (WebGPU).</li>
 	</ul>
 
 	<div class="note">
-		<strong>Honest caveat on the numbers.</strong> The blind sets of real tickets contain
+		<strong>Honest caveat on the numbers.</strong> The held-out sets contain
 		<strong>no address, url or secret spans at all</strong> — so these scores really cover the six
 		types that do appear (person, phone, e-mail, national id, account number, date). Address
 		accuracy is only measured on held-out <em>synthetic</em> text, where the case-augmented retrain
@@ -97,7 +96,7 @@
 		and nordic-v9 has <em>not</em> had the case-augmented retrain yet, so it is still the weaker of
 		the two on lowercase input. The small model is
 		genuinely strong — remarkably so for its size — but the 1.4B flagship remains more robust on the messiest
-		real-world prose. Both were validated only on tickets they never trained on.
+		real-world prose. Both were validated only on text they never trained on.
 	</div>
 
 	<p class="foot">

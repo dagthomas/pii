@@ -49,7 +49,7 @@
 	);
 
 	const SAMPLE_CSV =
-		'ticket_id,customer,message,status\r\n' +
+		'record_id,account,message,status\r\n' +
 		'4711,Fjellkraft AS,"Hei! Kari Nordmann (fnr 12038439853) er sykmeldt. Ring 412 34 567 eller kari.nordmann@fjellkraft.no. Mvh Ola Hansen",open\r\n' +
 		'4712,Nordkraft AB,"Hej! Anna Svensson (personnummer 811218-9876) kommer inte in. Ring 070-123 45 67 eller anna.svensson@nordkraft.se",open\r\n' +
 		'4713,Bygg og Bo AS,"Vi bytter kontonummer til IBAN NO9386011117947. Kontakt Per Olsen på per.olsen@byggbo.no",closed\r\n' +
@@ -206,8 +206,8 @@
 			<label class="filebtn" for="csvfile">Choose a CSV or Excel file</label>
 			<input id="csvfile" type="file" accept=".csv,.xlsx,.xls,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onchange={onFile} />
 			<span class="or">or</span>
-			<button class="chip" onclick={() => loadText(SAMPLE_CSV, 'sample-tickets.csv')}>Load sample tickets</button>
-			<button class="chip" onclick={() => { const a = document.createElement('a'); a.href = downloadSampleUrl(); a.download = 'sample-tickets.csv'; a.click(); }}>Download sample-tickets.csv</button>
+			<button class="chip" onclick={() => loadText(SAMPLE_CSV, 'sample-data.csv')}>Load sample rows</button>
+			<button class="chip" onclick={() => { const a = document.createElement('a'); a.href = downloadSampleUrl(); a.download = 'sample-data.csv'; a.click(); }}>Download sample-data.csv</button>
 			{#if errorMsg}<p class="err" role="alert">{errorMsg}</p>{/if}
 		</div>
 	{/if}

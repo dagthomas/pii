@@ -11,7 +11,7 @@ const REVISION = '675eb73ca7f42879d66ff3894723d5ec1378909f';
 env.allowLocalModels = false; // always fetch from the Hub
 
 /** The backbone is a 512-token DistilBERT and transformers.js silently truncates past it —
- *  in a redaction tool that means the tail of a long ticket comes back un-redacted. Feed it
+ *  in a redaction tool that means the tail of a long document comes back un-redacted. Feed it
  *  in windows instead. ~1,000 characters of Nordic prose is comfortably under 512 word pieces. */
 const WINDOW_CHARS = 1000;
 const WINDOW_OVERLAP = 120; // so an entity straddling a cut is still seen whole in one window

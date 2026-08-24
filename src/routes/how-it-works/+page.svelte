@@ -5,7 +5,7 @@
 	<h1>The AI runs in your browser. Nothing leaves.</h1>
 	<p class="lede">
 		Normally, "AI" means sending your text to a server. This page does the opposite: the model is
-		downloaded <em>to</em> your browser and runs on your own hardware. Your tickets, spreadsheets and
+		downloaded <em>to</em> your browser and runs on your own hardware. Your documents, spreadsheets and
 		names are never uploaded anywhere — there is no server to send them to.
 	</p>
 
@@ -34,7 +34,7 @@
 
 	<h2>Why this matters</h2>
 	<p>
-		Support tickets and HR exports are full of personal data — names, national IDs, phone numbers. The
+		Business documents and exports are full of personal data — names, national IDs, phone numbers. The
 		safest way to scrub them is to <strong>never send them anywhere in the first place</strong>. Because the
 		model runs locally:
 	</p>

@@ -21,12 +21,12 @@
 	const SAMPLES: { id: string; name: string; text: string }[] = [
 		{
 			id: 'no',
-			name: 'Norwegian ticket',
+			name: 'Norwegian sample',
 			text: 'Hei! Vår ansatte Kari Nordmann (fnr 12038439853) er sykmeldt. Dere når henne på kari.nordmann@fjellkraft.no eller 412 34 567.\nMvh Ola Hansen, HR-leder\nFjellkraft AS · org.nr 987 654 321 · sentralbord 73 90 00 00'
 		},
 		{
 			id: 'sv',
-			name: 'Swedish ticket',
+			name: 'Swedish sample',
 			text: 'Hej! Vår anställda Anna Svensson (personnummer 811218-9876) kommer inte in i portalen. Ring 070-123 45 67 eller mejla anna.svensson@nordkraft.se.\nVänligen, Erik Lindqvist\nVäxel: 08-123 45 00'
 		}
 	];
@@ -160,8 +160,8 @@
 		{/each}
 	</div>
 
-	<label for="ticket">Text to redact</label>
-	<textarea id="ticket" bind:value={input} rows="7" spellcheck="false"></textarea>
+	<label for="redact-input">Text to redact</label>
+	<textarea id="redact-input" bind:value={input} rows="7" spellcheck="false"></textarea>
 	<button class="go" onclick={run} disabled={engine.busy || engine.status === 'loading'}>
 		{engine.status === 'loading' ? 'Loading model…' : engine.busy ? 'Redacting…' : 'Redact'}
 	</button>
@@ -192,7 +192,7 @@
 			<strong>Two engines, both fully in your browser.</strong>
 			<span class="mono">Fast demo</span>: <strong><span class="mono">nordic-ner</span>, our own
 			135&nbsp;MB model</strong> — DistilBERT-multilingual fine-tuned on the same Nordic data as the
-			flagship (blind span-F1 <b>0.95</b>, and <b>0.94</b> on the same tickets lowercased) — plus pattern + checksum
+			flagship (blind span-F1 <b>0.95</b>, and <b>0.94</b> on the same text lowercased) — plus pattern + checksum
 			detectors (fødselsnummer mod-11, personnummer Luhn, IBAN mod-97). Loads in seconds and runs
 			fully in your browser: ideal for redacting CSV/Excel exports locally without sending anything out.
 		</p>
