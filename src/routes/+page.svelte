@@ -88,9 +88,13 @@
 	<h1>Redactor in the Browser</h1>
 	<p class="lede">
 		Personal-data detection running entirely in your browser — the neural model on your own GPU via
-		WebGPU (WASM fallback), plus checksum validators for Nordic identifiers. No server sees the text. Batch mode:
-		<a class="batchlink" href="/batch">redact a whole CSV →</a>
+		WebGPU (WASM fallback), plus checksum validators for Nordic identifiers. No server sees the text.
 	</p>
+	<nav class="links">
+		<a href="/batch">Batch CSV / Excel →</a>
+		<a href="/models">The models →</a>
+		<a href="/how-it-works">How it works →</a>
+	</nav>
 
 	<div class="engines" role="radiogroup" aria-label="Detection engine">
 		<label class={['engchip', { on: mode === 'fast' }]}><input type="radio" bind:group={mode} value="fast" /> Fast demo · NER + checksums</label>
@@ -212,6 +216,21 @@
 	}
 	.lede a {
 		color: var(--accent);
+	}
+	.links {
+		display: flex;
+		gap: 16px;
+		flex-wrap: wrap;
+		margin: 10px 0 2px;
+		font-size: 0.9rem;
+	}
+	.links a {
+		color: var(--accent);
+		text-decoration: none;
+		font-weight: 500;
+	}
+	.links a:hover {
+		text-decoration: underline;
 	}
 	.engines {
 		display: flex;
