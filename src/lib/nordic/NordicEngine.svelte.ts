@@ -1,5 +1,5 @@
 /** The real nordic-v9 model, in-browser via onnxruntime-web. Same surface as RedactorEngine. */
-import type { Span } from '../detectors';
+import { detectStructured, mergeSpans, type Span } from '../detectors';
 
 export class NordicEngine {
 	status = $state<'idle' | 'loading' | 'ready' | 'error'>('idle');
@@ -12,6 +12,9 @@ export class NordicEngine {
 	lastMs = $state<number | null>(null);
 	lastTokens = $state<number | null>(null);
 	loadMs = $state<number | null>(null);
+	truncated = $state(false);
+	/** Why the model is unavailable — the backend errors that used to be swallowed. */
+	diagnostics = $state.raw<string[]>([]);
 	spans = $state.raw<Span[]>([]);
 	analyzedText = $state('');
 
@@ -24,9 +27,12 @@ export class NordicEngine {
 		this.status = 'loading';
 		this.progress = 'starting…';
 		this.#worker = new Worker(new URL('./worker-nordic.ts', import.meta.url), { type: 'module' });
+		this.#worker.onerror = (e) => this.#fail(`worker crashed: ${e.message}`);
 		this.#worker.onmessage = (e: MessageEvent) => {
 			const m = e.data;
-			if (m.type === 'progress') {
+			if (m.type === 'log') {
+				this.diagnostics = [...this.diagnostics, String(m.message)];
+			} else if (m.type === 'progress') {
 				this.phase = 'download';
 				this.pct = m.pct;
 				this.mb = m.mb;
@@ -41,16 +47,27 @@ export class NordicEngine {
 				this.progress = '';
 				this.phase = null;
 			} else if (m.type === 'error') {
-				this.status = 'error';
-				this.progress = m.message;
+				this.#fail(m.message);
 			} else if (m.type === 'result') {
 				this.lastMs = m.ms;
 				this.lastTokens = m.tokens ?? null;
+				this.truncated = !!m.truncated;
 				this.#resolve?.(m.spans);
 				this.#resolve = null;
 			}
 		};
 		this.#worker.postMessage({ type: 'init' });
+	}
+
+	/** Enter the error state and release anything waiting on the worker, so the UI
+	 *  can never be left stuck on "Redacting…" with no explanation. */
+	#fail(message: string) {
+		this.status = 'error';
+		this.progress = message;
+		this.phase = null;
+		this.diagnostics = [...this.diagnostics, message];
+		this.#resolve?.([]);
+		this.#resolve = null;
 	}
 
 	stop() {
@@ -59,7 +76,7 @@ export class NordicEngine {
 		this.status = 'idle';
 	}
 
-	async #run(text: string): Promise<Span[]> {
+	async #model(text: string): Promise<Span[]> {
 		if (this.status !== 'ready' || !this.#worker) return [];
 		return new Promise<Span[]>((resolve) => {
 			this.#resolve = resolve;
@@ -67,11 +84,19 @@ export class NordicEngine {
 		});
 	}
 
+	/** Checksum + pattern detectors always run; the model adds names and free-text PII
+	 *  when it is up. If it is not, the run still redacts what can be proven. */
+	async #detect(text: string): Promise<Span[]> {
+		const structured = detectStructured(text);
+		const model = await this.#model(text);
+		return mergeSpans([...structured, ...model]);
+	}
+
 	async redact(text: string): Promise<void> {
-		if (this.busy || this.status !== 'ready') return; // never render a fake empty result
+		if (this.busy || this.status === 'loading') return;
 		this.busy = true;
 		try {
-			this.spans = await this.#run(text);
+			this.spans = await this.#detect(text);
 			this.analyzedText = text;
 		} finally {
 			this.busy = false;
@@ -79,7 +104,7 @@ export class NordicEngine {
 	}
 
 	async redactText(text: string, _useNer = true): Promise<string> {
-		const spans = await this.#run(text);
+		const spans = await this.#detect(text);
 		let out = '';
 		let cursor = 0;
 		for (const s of spans) {

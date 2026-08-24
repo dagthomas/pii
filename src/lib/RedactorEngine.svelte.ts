@@ -7,6 +7,9 @@ export class RedactorEngine {
 	progress = $state('');
 	busy = $state(false);
 	lastMs = $state<number | null>(null);
+	/** Set when the last run needed a second, truecased inference pass (lowercase input). */
+	caseBoosted = $state(false);
+	diagnostics = $state.raw<string[]>([]);
 	spans = $state.raw<Span[]>([]);
 	analyzedText = $state('');
 
@@ -18,24 +21,37 @@ export class RedactorEngine {
 		if (this.#worker) return;
 		this.status = 'loading';
 		this.#worker = new Worker(new URL('./worker.ts', import.meta.url), { type: 'module' });
+		this.#worker.onerror = (e) => this.#fail(`worker crashed: ${e.message}`);
 		this.#worker.onmessage = (e: MessageEvent) => {
 			const m = e.data;
-			if (m.type === 'progress' && m.info?.status === 'progress' && m.info?.file?.endsWith('.onnx')) {
+			if (m.type === 'log') {
+				this.diagnostics = [...this.diagnostics, String(m.message)];
+			} else if (m.type === 'progress' && m.info?.status === 'progress' && m.info?.file?.endsWith('.onnx')) {
 				this.progress = `downloading model ${Math.round(m.info.progress ?? 0)}%`;
 			} else if (m.type === 'ready') {
 				this.status = 'ready';
 				this.device = m.device;
 				this.progress = '';
 			} else if (m.type === 'error') {
-				this.status = 'error';
-				this.progress = m.message;
+				this.#fail(m.message);
 			} else if (m.type === 'result') {
 				this.lastMs = m.ms;
+				this.caseBoosted = !!m.caseBoosted;
 				this.#resolve?.(m.spans as Span[]);
 				this.#resolve = null;
 			}
 		};
 		this.#worker.postMessage({ type: 'init' });
+	}
+
+	/** Enter the error state and release anything waiting on the worker, so the UI
+	 *  can never be left stuck on "Redacting…" with no explanation. */
+	#fail(message: string) {
+		this.status = 'error';
+		this.progress = message;
+		this.diagnostics = [...this.diagnostics, message];
+		this.#resolve?.([]);
+		this.#resolve = null;
 	}
 
 	stop() {

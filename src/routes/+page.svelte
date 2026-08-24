@@ -72,7 +72,7 @@
 			: engine.status === 'ready'
 				? `model ready · ${engine.device === 'webgpu' ? 'your GPU (WebGPU)' : 'CPU (WASM)'}`
 				: engine.status === 'error'
-					? `model unavailable — checksum detectors still active`
+					? 'model unavailable — checksum and pattern detectors still active'
 					: 'starting…'
 	);
 
@@ -107,6 +107,17 @@
 		<LoadPanel {engine} />
 	{/if}
 
+	{#if engine.status === 'error'}
+		<div class="alert" role="alert">
+			<p><strong>The neural model could not start.</strong> Checksum and pattern detectors are still running, so structured PII (national IDs, IBAN, cards, e-mail, phones, street addresses) is redacted — but names and free-text PII are not.</p>
+			{#if engine.diagnostics.length}
+				<ul>
+					{#each engine.diagnostics as d, i (i)}<li>{d}</li>{/each}
+				</ul>
+			{/if}
+		</div>
+	{/if}
+
 	<SpecPanel {mode} {engine} />
 
 	<div class="samples">
@@ -133,7 +144,13 @@
 					{:else}{p.text}{/if}
 				{/each}
 			</div>
-			<p class="hint">Hover a bar to see the category and which detector fired. Company org numbers and switchboards are deliberately left alone.</p>
+			<p class="hint">
+				Hover a bar to see the category and which detector fired. Company org numbers and
+				switchboards are deliberately left alone.{#if mode === 'fast' && fast.caseBoosted}
+					The text was all lower case, so it was run a second time truecased — both models are
+					cased and miss lowercase names and streets otherwise.{/if}{#if mode === 'nordic' && nordic.truncated}
+					<strong>Input was longer than nordic-v9's 1,024-token window; only the first part was analysed.</strong>{/if}
+			</p>
 		</section>
 	{/if}
 
@@ -374,6 +391,27 @@
 	.hint {
 		font-size: 0.82rem;
 		color: var(--ink-3);
+	}
+	.alert {
+		border: 1px solid var(--rule);
+		border-left: 3px solid #b4472e;
+		background: var(--card);
+		border-radius: 10px;
+		padding: 12px 16px;
+		margin: 4px 0 14px;
+		font-size: 0.86rem;
+		color: var(--ink-2);
+	}
+	.alert p {
+		margin: 0;
+	}
+	.alert ul {
+		margin: 8px 0 0;
+		padding-left: 18px;
+		font-family: ui-monospace, monospace;
+		font-size: 0.78rem;
+		color: var(--ink-3);
+		word-break: break-word;
 	}
 	footer {
 		margin-top: 44px;

@@ -1,7 +1,7 @@
 <svelte:head><title>The models · Nordic PII</title></svelte:head>
 
 <main>
-	<p class="eyebrow"><a href="/">← redactor</a> · the models</p>
+	<p class="eyebrow">the models</p>
 	<h1>Three tools, one training pipeline</h1>
 	<p class="lede">
 		Every model here was trained on the <strong>same data</strong> — synthetic Nordic HR/support text
@@ -113,7 +113,6 @@
 	:global(body) { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.6 system-ui, sans-serif; }
 	main { max-width: 74ch; margin: 0 auto; padding: 48px 20px 90px; }
 	.eyebrow { font-family: ui-monospace, monospace; font-size: 0.74rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin: 0; }
-	.eyebrow a { color: var(--accent); text-decoration: none; }
 	h1 { margin: 8px 0 0; font-size: 2.2rem; line-height: 1.1; letter-spacing: -0.01em; }
 	h2 { font-size: 1.4rem; margin: 46px 0 12px; padding-top: 22px; border-top: 1px solid var(--rule); }
 	h3 { margin: 4px 0 6px; font-size: 1.1rem; }
