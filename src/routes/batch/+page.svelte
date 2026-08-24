@@ -191,7 +191,7 @@
 	</p>
 
 	<div class="engines" role="radiogroup" aria-label="Detection engine">
-		<label class={['engchip', { on: mode === 'fast' }]}><input type="radio" bind:group={mode} value="fast" /> Fast demo · NER + checksums</label>
+		<label class={['engchip', { on: mode === 'fast' }]}><input type="radio" bind:group={mode} value="fast" /> nordic-ner · our small model + checksums</label>
 		<label class={['engchip', { on: mode === 'nordic' }]}><input type="radio" bind:group={mode} value="nordic" /> nordic-v9 · the real model (~1.9 GB, downloads once)</label>
 	</div>
 

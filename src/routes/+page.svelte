@@ -97,7 +97,7 @@
 	</nav>
 
 	<div class="engines" role="radiogroup" aria-label="Detection engine">
-		<label class={['engchip', { on: mode === 'fast' }]}><input type="radio" bind:group={mode} value="fast" /> Fast demo · NER + checksums</label>
+		<label class={['engchip', { on: mode === 'fast' }]}><input type="radio" bind:group={mode} value="fast" /> nordic-ner · our small model + checksums</label>
 		<label class={['engchip', { on: mode === 'nordic' }]}><input type="radio" bind:group={mode} value="nordic" /> nordic-v9 · the real model (~1.9 GB, downloads once)</label>
 	</div>
 
@@ -140,10 +140,11 @@
 	<footer>
 		<p>
 			<strong>Two engines, both fully in your browser.</strong>
-			<span class="mono">Fast demo</span>: a small multilingual NER model
-			(<span class="mono">distilbert-base-multilingual-cased-ner-hrl</span>, ~65&nbsp;MB) for names,
-			plus pattern + checksum detectors (fødselsnummer mod-11, personnummer Luhn, IBAN mod-97)
-			mirroring the production label policy — quick to load, weaker on Nordic names.
+			<span class="mono">Fast demo</span>: <strong><span class="mono">nordic-ner</span>, our own
+			135&nbsp;MB model</strong> — DistilBERT-multilingual fine-tuned on the same Nordic data as the
+			flagship (blind span-F1 <b>0.94</b> across all nine PII types) — plus pattern + checksum
+			detectors (fødselsnummer mod-11, personnummer Luhn, IBAN mod-97). Loads in seconds and runs
+			fully in your browser: ideal for redacting CSV/Excel exports locally without sending anything out.
 		</p>
 		<p>
 			<strong><span class="mono">nordic-v9</span> is the production model itself</strong> — a custom

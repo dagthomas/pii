@@ -30,10 +30,10 @@
 		{ k: 'Context', v: '1,024', d: 'tokens / pass' }
 	];
 	const fastArch = [
-		{ k: 'NER model', v: '65 MB', d: 'DistilBERT multilingual' },
+		{ k: 'nordic-ner', v: '135 MB', d: 'our DistilBERT · int8' },
+		{ k: 'Blind F1', v: '0.94', d: 'all 9 PII types' },
 		{ k: 'Checksums', v: '5', d: 'fnr · pnr · IBAN · Luhn' },
-		{ k: 'Languages', v: '8', d: 'no·nn·sv·da·fi·pl·is·en' },
-		{ k: 'PII classes', v: '10', d: 'names + structured' }
+		{ k: 'Languages', v: '8', d: 'no·nn·sv·da·fi·pl·is·en' }
 	];
 	const specs = $derived(isNordic ? arch : fastArch);
 </script>
