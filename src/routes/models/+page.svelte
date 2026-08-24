@@ -19,14 +19,14 @@
 					<td><b>nordic-v9</b><br /><span class="s">flagship</span></td>
 					<td>OpenAI <span class="mono">privacy-filter</span> (1.4B MoE)</td>
 					<td class="n">1.84 GB<br /><span class="s">951 MB server</span></td>
-					<td class="n">F1 0.86–0.93</td>
+					<td class="n">F1 0.86–0.93<br /><span class="s">weaker lowercased</span></td>
 					<td>Server (CPU/GPU) · browser (WebGPU)</td>
 				</tr>
 				<tr>
 					<td><b>nordic-ner</b><br /><span class="s">our own small model</span></td>
 					<td>DistilBERT multilingual (135M)</td>
 					<td class="n">135 MB<br /><span class="s">int8 ONNX</span></td>
-					<td class="n">F1 0.94</td>
+					<td class="n">F1 0.95<br /><span class="s">0.94 lowercased</span></td>
 					<td>Browser (WebGPU/WASM) · any CPU</td>
 				</tr>
 				<tr>
@@ -49,7 +49,8 @@
 			<h3>nordic-ner</h3>
 			<p>
 				Our own 135 MB model. Small enough to load fast and run on any laptop GPU or CPU, yet it scored
-				<b>0.94 span-F1</b> on blind tickets across all nine PII types. This is the one for
+				<b>0.95 span-F1</b> on blind tickets — and <b>0.94 on the same tickets lowercased</b>,
+				after a case-augmented retrain. This is the one for
 				<strong>redacting whole spreadsheets locally</strong> — drop in a CSV or Excel file, redact every
 				cell in the browser, download it back, and <strong>nothing ever leaves the machine</strong>. Perfect
 				for cleaning exports before they go to a vendor, an LLM, or a shared drive.
@@ -87,8 +88,14 @@
 	</ul>
 
 	<div class="note">
-		<strong>Honest caveat on the numbers.</strong> nordic-ner's 0.94 is measured at token-span granularity;
-		nordic-v9's 0.86–0.93 are character-exact spans on (partly different) blind sets. The small model is
+		<strong>Honest caveat on the numbers.</strong> The blind sets of real tickets contain
+		<strong>no address, url or secret spans at all</strong> — so these scores really cover the six
+		types that do appear (person, phone, e-mail, national id, account number, date). Address
+		accuracy is only measured on held-out <em>synthetic</em> text, where the case-augmented retrain
+		took lowercase addresses from 0.41 to 0.99. nordic-ner's figure is measured at token-span
+		granularity; nordic-v9's 0.86–0.93 are character-exact spans on (partly different) blind sets,
+		and nordic-v9 has <em>not</em> had the case-augmented retrain yet, so it is still the weaker of
+		the two on lowercase input. The small model is
 		genuinely strong — remarkably so for its size — but the 1.4B flagship remains more robust on the messiest
 		real-world prose. Both were validated only on tickets they never trained on.
 	</div>

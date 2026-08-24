@@ -31,7 +31,7 @@
 	];
 	const fastArch = [
 		{ k: 'nordic-ner', v: '135 MB', d: 'our DistilBERT · int8' },
-		{ k: 'Blind F1', v: '0.94', d: 'all 9 PII types' },
+		{ k: 'Blind F1', v: '0.95', d: 'cased · 0.94 lowercased' },
 		{ k: 'Checksums', v: '5', d: 'fnr · pnr · IBAN · Luhn' },
 		{ k: 'Languages', v: '8', d: 'no·nn·sv·da·fi·pl·is·en' }
 	];
