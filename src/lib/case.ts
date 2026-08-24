@@ -40,7 +40,20 @@ const FUNCTION_WORDS = new Set(
 		'og eller men som at om til fra af med ved på pa efter før for mellem uden mod gennem ' +
 		'er var være vaere bliver blev blive har havde have kan kunne skal skulle vil ville skal ' +
 		'jeg du han hun den det vi I de mig dig sig os dem ham hende jer min din sin vores deres hans hendes ' +
-		'ikke også ogsaa kun nu her der hvor hvad hvem hvorfor hvordan ja nej tak hej'
+		'ikke også ogsaa kun nu her der hvor hvad hvem hvorfor hvordan ja nej tak hej ' +
+		// English — tickets in this corpus are often written in English, and without these
+		// every content word gets capitalised, which is exactly the pattern that invents names
+		'the a an and or but if then than that this these those there here so as of in on at to ' +
+		'for from with without by about into over under after before between through during ' +
+		'is are was were be been being am do does did doing have has had having ' +
+		'can could shall should will would may might must ' +
+		'i you he she it we they me him her us them my your his its our their mine yours hers ' +
+		'not no yes only just now also very too more most much many few some any all each every ' +
+		'what which who whom whose when where why how ' +
+		'hi hey hello thanks thank regards best please kind sincerely cheers ' +
+		'show shows showed see seen let lets get gets got send sent sending give gives given ' +
+		'latest last next new old report reports email mail phone number name address date ' +
+		'attached below above following regarding re fwd'
 	)
 		.toLowerCase()
 		.split(/\s+/)

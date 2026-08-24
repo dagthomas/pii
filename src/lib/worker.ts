@@ -14,6 +14,11 @@ env.allowLocalModels = false; // always fetch from the Hub
 const WINDOW_CHARS = 1000;
 const WINDOW_OVERLAP = 120; // so an entity straddling a cut is still seen whole in one window
 
+/** The truecased pass is a noisier view of the text — capitalising a content word can make an
+ *  ordinary phrase ("vise siste rapport" -> "Vise Siste Rapport") look like a proper noun. It
+ *  therefore has to clear a higher bar than the raw pass before its spans are accepted. */
+const TRUECASE_MIN_SCORE = 0.9;
+
 type DemoLabel =
 	| 'person' | 'phone' | 'email' | 'address' | 'date'
 	| 'account_number' | 'national_id' | 'secret' | 'url';
@@ -60,6 +65,7 @@ interface RawSpan {
 	end: number;
 	label: DemoLabel;
 	source: 'ner';
+	score: number;
 }
 
 /** Find `surface` at or after `from`, aligned to a word boundary.
@@ -106,35 +112,47 @@ function locate(
  *  Group consecutive B-/I- tokens of one type, rebuild the surface string, and locate it
  *  in the text. Predictions arrive in token order, so one shared cursor advances monotonically
  *  — a per-label cursor let a later entity match an earlier position in the text. */
-function mergeSpansFromTokens(toks: Tok[], text: string, offset = 0): RawSpan[] {
+function mergeSpansFromTokens(
+	toks: Tok[],
+	text: string,
+	offset = 0,
+	minScore = 0.5
+): RawSpan[] {
 	const spans: RawSpan[] = [];
 	let cursor = 0;
 	let type: string | null = null;
 	let pieces: string[] = [];
+	let scores: number[] = [];
 
 	const flush = () => {
 		if (type && TO_DEMO[type] && pieces.length) {
 			// rebuild: "##x" joins without space, otherwise space-separated
 			let surface = '';
 			for (const p of pieces) surface += p.startsWith('##') ? p.slice(2) : (surface ? ' ' + p : p);
-			const hit = surface.length >= 2 ? locate(text, surface, pieces, cursor) : null;
+			// A one-character surface is only usable when it is a continuation piece, because
+			// locate() then grows it out to the whole word ("##l" -> "asil"). Standing alone it
+			// would match some unrelated letter, which is how "hey asil" used to redact one "l".
+			const usable = surface.length >= 2 || pieces[0].startsWith('##');
+			const hit = usable ? locate(text, surface, pieces, cursor) : null;
 			if (hit) {
 				spans.push({
 					start: offset + hit.start,
 					end: offset + hit.end,
 					label: TO_DEMO[type],
-					source: 'ner'
+					source: 'ner',
+					score: scores.reduce((a, b) => a + b, 0) / scores.length
 				});
 				cursor = hit.end;
 			}
 		}
 		type = null;
 		pieces = [];
+		scores = [];
 	};
 
 	for (const t of toks) {
 		const name = t.entity ?? 'O';
-		if (name === 'O' || t.score < 0.5) {
+		if (name === 'O' || t.score < minScore) {
 			flush();
 			continue;
 		}
@@ -144,8 +162,10 @@ function mergeSpansFromTokens(toks: Tok[], text: string, offset = 0): RawSpan[] 
 			flush();
 			type = ty;
 			pieces = [t.word];
+			scores = [t.score];
 		} else {
 			pieces.push(t.word);
+			scores.push(t.score);
 		}
 	}
 	flush();
@@ -174,11 +194,11 @@ function windows(text: string): { text: string; offset: number }[] {
 }
 
 /** One full pass over the text (all windows). */
-async function pass(text: string): Promise<RawSpan[]> {
+async function pass(text: string, minScore = 0.5): Promise<RawSpan[]> {
 	const spans: RawSpan[] = [];
 	for (const w of windows(text)) {
 		const out = (await ner!(w.text)) as unknown as Tok[];
-		spans.push(...mergeSpansFromTokens(out, w.text, w.offset));
+		spans.push(...mergeSpansFromTokens(out, w.text, w.offset, minScore));
 	}
 	return spans;
 }
@@ -203,7 +223,7 @@ onmessage = async (msg: MessageEvent) => {
 		if (m.caseBoost !== false && isUndercased(text)) {
 			const cased = truecase(text);
 			if (cased !== text && cased.length === text.length) {
-				spans.push(...(await pass(cased)));
+				spans.push(...(await pass(cased, m.truecaseMinScore ?? TRUECASE_MIN_SCORE)));
 				caseBoosted = true;
 			}
 		}

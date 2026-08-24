@@ -74,96 +74,6 @@ const ROLE_LOCALS = new Set([
 const SWITCHBOARD_CUES = /(sentralbord|switchboard|växel|vaxel|omstilling|office)\W{0,12}$/i;
 const ORGNR_CUES = /(org\.?\s?nr\.?|orgnr|organisasjonsnummer|organisationsnummer|vat)\W{0,12}$/i;
 
-/** Nordic street-name endings, for the compound case: "Kirkegata", "granittveien",
- *  "Storgatan". Only tested against words of 6+ characters, so a short everyday word
- *  can never match on its own here. */
-const COMPOUND_SUFFIXES = [
-	'gate', 'gaten', 'gata', 'gatan', 'vei', 'veien', 'veg', 'vegen', 'väg', 'vägen',
-	'vej', 'vejen', 'plass', 'plassen', 'plats', 'platsen', 'alle', 'allé', 'alleen', 'alléen',
-	'allén', 'gang', 'gangen', 'sti', 'stien', 'brygge', 'brygga', 'bryggen', 'terrasse',
-	'terrassen', 'tun', 'tunet', 'jorde', 'jordet', 'sving', 'svingen', 'bakke', 'bakken',
-	'haug', 'haugen', 'krok', 'kroken', 'lia', 'lien', 'åsen', 'asen', 'ring', 'ringen',
-	'kai', 'kaien', 'kaia', 'mo', 'moen', 'torg', 'torget', 'park', 'parken', 'hage', 'hagen',
-	'felt', 'feltet', 'dal', 'dalen', 'holme', 'holmen', 'strand', 'stranda', 'stranden',
-	'kolle', 'kollen', 'topp', 'toppen', 'skog', 'skogen', 'smau', 'smauet', 'voll', 'vollen',
-	'eng', 'engen', 'løkka', 'lokka', 'grend', 'grenda', 'myr', 'myra', 'berg', 'berget',
-	'marka', 'stubben', 'porten', 'veita', 'bru', 'brua'
-];
-
-/** The much smaller set that may stand alone as its own word after a name
- *  ("Karl Johans gate 1", "Bjørnsons vei 12"). Everyday Norwegian words are excluded
- *  even though they are valid street endings in a compound: "ring", "gang", "alle",
- *  "sti", "kai", "park" and friends would turn "Ring 412 34 567" into an address. */
-const STANDALONE_SUFFIXES = new Set([
-	'gate', 'gata', 'gatan', 'gaten', 'vei', 'veien', 'veg', 'vegen', 'väg', 'vägen', 'vej',
-	'plass', 'plassen', 'plats', 'allé', 'alléen', 'brygge', 'bryggen', 'terrasse', 'torg', 'torget'
-]);
-
-const SUFFIX_TAIL = new RegExp(`(?:${COMPOUND_SUFFIXES.join('|')})$`, 'iu');
-
-/** Words that must not be swallowed into a street name when scanning leftwards. */
-const ADDRESS_STOP = new Set(
-	// "per" and "bo" are omitted on purpose — they are common Nordic given names, and a
-	// street named after a person ("Per Olsens gate 1") must keep the whole name in the span.
-	('i på pa til fra av med ved hos om for under over etter før for mellom uten mot gjennom ' +
-		'er var vare være bor bodde heter ligger flyttet flytte flytter sender send sendt post poste ' +
-		'og eller men som at nar når det den de denne dette disse en et ei min din sin var vår deres hans hennes ' +
-		'jeg du han hun vi dere adresse adressen adresser ny nye gamle her der hjemme jobb kontor ' +
-		'och att med av till fran från pa på hos utan mot bor ar är var vid').split(/\s+/).filter(Boolean)
-);
-
-/** A word token. It may contain "." / "-" / "'" internally ("St. Olavs", "Lars-Erik") but must
- *  not end on one — otherwise a sentence-final "sykmeldt." reads as adjacent to the next word
- *  and gets pulled into a street name. */
-const WORD_RE = /[\p{L}\p{N}](?:[\p{L}\p{N}.'’\-]*[\p{L}\p{N}])?/gu;
-const HOUSE_NUMBER = /^\d{1,4}[a-zæøåäöA-ZÆØÅÄÖ]?$/;
-/** ", 0157 Oslo" (NO/DK) or ", 111 51 Stockholm" (SE), optionally a two-word city. */
-const POSTAL_CITY = /^\s*,?\s*(?:\d{4}|\d{3}\s?\d{2})\s+\p{L}{2,}(?:[ \-]\p{L}{2,}){0,2}/u;
-
-/** Street addresses, found without a model and without regard to letter case.
- *  Both models are cased and miss lowercase addresses entirely; this closes that hole. */
-export function detectAddresses(text: string): Span[] {
-	const toks = [...text.matchAll(WORD_RE)].map((m) => ({
-		w: m[0],
-		s: m.index,
-		e: m.index + m[0].length
-	}));
-	const out: Span[] = [];
-	let consumedUpTo = -1;
-
-	for (let i = 0; i < toks.length; i++) {
-		if (i <= consumedUpTo) continue;
-		const word = toks[i].w.toLowerCase();
-		const standalone = STANDALONE_SUFFIXES.has(word);
-		const compound = !standalone && word.length >= 6 && SUFFIX_TAIL.test(word);
-		if (!standalone && !compound) continue;
-
-		const num = toks[i + 1];
-		if (!num || !HOUSE_NUMBER.test(num.w)) continue;
-		if (!/^[ \u00a0]?$/.test(text.slice(toks[i].e, num.s))) continue; // only a space may separate them
-
-		// walk left over at most two name words, never crossing punctuation
-		let start = toks[i].s;
-		let nameWords = 0;
-		for (let j = i - 1; j >= 0 && nameWords < 2; j--) {
-			if (!/^[ \u00a0]$/.test(text.slice(toks[j].e, toks[j + 1].s))) break;
-			if (ADDRESS_STOP.has(toks[j].w.toLowerCase())) break;
-			if (/^\d/.test(toks[j].w)) break;
-			start = toks[j].s;
-			nameWords++;
-		}
-		if (standalone && nameWords === 0) continue; // a bare "vei 2" is not an address
-
-		let end = num.e;
-		const tail = POSTAL_CITY.exec(text.slice(end));
-		if (tail) end += tail[0].length;
-
-		out.push({ start, end, label: 'address', source: 'pattern' });
-		while (consumedUpTo + 1 < toks.length && toks[consumedUpTo + 1].s < end) consumedUpTo++;
-	}
-	return out;
-}
-
 function push(spans: Span[], start: number, end: number, label: Label, source: Span['source']) {
 	spans.push({ start, end, label, source });
 }
@@ -220,8 +130,6 @@ export function detectStructured(text: string): Span[] {
 		if (!m[1] && digits.length === 9) continue;
 		push(spans, m.index, m.index + m[0].length, 'phone', 'pattern');
 	}
-
-	spans.push(...detectAddresses(text));
 
 	return spans;
 }
