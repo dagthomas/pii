@@ -3,9 +3,11 @@
  *  in the browser via transformers.js. WebGPU first, WASM fallback. Detects all 9 PII types
  *  with char-offset spans; structured IDs are additionally checksum-validated on the main thread. */
 import { pipeline, env, type TokenClassificationPipeline } from '@huggingface/transformers';
-import { truecase, isUndercased } from './case';
 
 const MODEL = 'dagthomas/nordic-ner';
+/** Pinned to the case-augmented retrain. Pinning also busts the browser's model cache, so a
+ *  returning visitor is not left running the previous weights out of Cache Storage. */
+const REVISION = '675eb73ca7f42879d66ff3894723d5ec1378909f';
 env.allowLocalModels = false; // always fetch from the Hub
 
 /** The backbone is a 512-token DistilBERT and transformers.js silently truncates past it —
@@ -14,10 +16,6 @@ env.allowLocalModels = false; // always fetch from the Hub
 const WINDOW_CHARS = 1000;
 const WINDOW_OVERLAP = 120; // so an entity straddling a cut is still seen whole in one window
 
-/** The truecased pass is a noisier view of the text — capitalising a content word can make an
- *  ordinary phrase ("vise siste rapport" -> "Vise Siste Rapport") look like a proper noun. It
- *  therefore has to clear a higher bar than the raw pass before its spans are accepted. */
-const TRUECASE_MIN_SCORE = 0.9;
 
 type DemoLabel =
 	| 'person' | 'phone' | 'email' | 'address' | 'date'
@@ -42,6 +40,7 @@ async function load() {
 		try {
 			ner = (await pipeline('token-classification', MODEL, {
 				device: dev,
+				revision: REVISION,
 				dtype: 'q8',
 				progress_callback: (p: unknown) => postMessage({ type: 'progress', info: p })
 			})) as TokenClassificationPipeline;
@@ -214,25 +213,14 @@ onmessage = async (msg: MessageEvent) => {
 		}
 		const text: string = m.text;
 		const t0 = performance.now();
+		// One pass. The model is trained with case augmentation, so lowercase input is in
+		// distribution — no truecasing hack, no stopword list, no second inference.
 		const spans = await pass(text);
-
-		// The model is cased. On all-lowercase input names fragment and street names vanish,
-		// so run a second pass over a truecased copy — offsets are preserved character for
-		// character, so its spans apply to the original text unchanged.
-		let caseBoosted = false;
-		if (m.caseBoost !== false && isUndercased(text)) {
-			const cased = truecase(text);
-			if (cased !== text && cased.length === text.length) {
-				spans.push(...(await pass(cased, m.truecaseMinScore ?? TRUECASE_MIN_SCORE)));
-				caseBoosted = true;
-			}
-		}
 
 		postMessage({
 			type: 'result',
 			id: m.id,
 			spans,
-			caseBoosted,
 			ms: Math.round(performance.now() - t0)
 		});
 	}

@@ -146,9 +146,7 @@
 			</div>
 			<p class="hint">
 				Hover a bar to see the category and which detector fired. Company org numbers and
-				switchboards are deliberately left alone.{#if mode === 'fast' && fast.caseBoosted}
-					The text was all lower case, so it was run a second time truecased — both models are
-					cased and miss lowercase names and streets otherwise.{/if}{#if mode === 'nordic' && nordic.truncated}
+				switchboards are deliberately left alone.{#if mode === 'nordic' && nordic.truncated}
 					<strong>Input was longer than nordic-v9's 1,024-token window; only the first part was analysed.</strong>{/if}
 			</p>
 		</section>

@@ -7,8 +7,6 @@ export class RedactorEngine {
 	progress = $state('');
 	busy = $state(false);
 	lastMs = $state<number | null>(null);
-	/** Set when the last run needed a second, truecased inference pass (lowercase input). */
-	caseBoosted = $state(false);
 	diagnostics = $state.raw<string[]>([]);
 	spans = $state.raw<Span[]>([]);
 	analyzedText = $state('');
@@ -36,7 +34,6 @@ export class RedactorEngine {
 				this.#fail(m.message);
 			} else if (m.type === 'result') {
 				this.lastMs = m.ms;
-				this.caseBoosted = !!m.caseBoosted;
 				this.#resolve?.(m.spans as Span[]);
 				this.#resolve = null;
 			}
