@@ -63,35 +63,35 @@
 	}
 	.eyebrow { font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin: 0; }
 	h1 { margin: 8px 0 0; font-size: 2.2rem; line-height: 1.12; letter-spacing: -0.01em; text-wrap: balance; }
-	h2 { font-size: 1.4rem; margin: 46px 0 12px; padding-top: 22px; border-top: 1px solid var(--rule); }
+	h2 { font-size: 1.4rem; margin: 46px 0 12px; padding-top: 22px; border-top: 1px solid var(--line); }
 	.lede { color: var(--ink-2); }
 	a { color: var(--accent); }
 	.mono { font-family: var(--font-mono); font-size: 0.92em; }
 	.flow { display: flex; align-items: stretch; gap: 0; margin: 26px 0 4px; }
-	.node { flex: 1; background: var(--card); border: 1px solid var(--rule); border-radius: 12px; padding: 18px; text-align: center; }
+	.node { flex: 1; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; text-align: center; }
 	.node.good { border-color: var(--accent); background: var(--accent-soft); }
 	.node.bad { opacity: 0.6; }
 	.ic { font-size: 1.8rem; }
 	.lbl { font-weight: 700; margin-top: 6px; }
 	.sub { font-size: 0.78rem; color: var(--ink-3); }
 	.barrier { display: flex; align-items: center; justify-content: center; padding: 0 6px; position: relative; }
-	.barrier::before { content: ''; position: absolute; top: 10%; bottom: 10%; width: 3px; background: repeating-linear-gradient(var(--bad), var(--bad) 6px, transparent 6px, transparent 12px); border-radius: 2px; }
-	.barrier span { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 0.66rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--bad); background: var(--paper); padding: 6px 2px; font-weight: 600; }
+	.barrier::before { content: ''; position: absolute; top: 10%; bottom: 10%; width: 3px; background: repeating-linear-gradient(var(--danger), var(--danger) 6px, transparent 6px, transparent 12px); border-radius: 2px; }
+	.barrier span { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 0.66rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--danger); background: var(--paper); padding: 6px 2px; font-weight: 600; }
 	.cap { font-size: 0.84rem; color: var(--ink-3); }
 	.steps { padding-left: 20px; }
 	.steps li { margin: 12px 0; }
 	.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
-	.cell { background: var(--card); border: 1px solid var(--rule); border-radius: 12px; padding: 14px 16px; }
+	.cell { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
 	.cell .k { font-weight: 700; font-size: 0.92rem; margin-bottom: 4px; }
 	.cell p { margin: 0; font-size: 0.88rem; color: var(--ink-2); }
 	.why { padding-left: 20px; }
 	.why li { margin: 8px 0; }
-	.note { border-left: 3px solid var(--accent); background: var(--card); border-radius: 0 10px 10px 0; padding: 12px 18px; margin: 22px 0; font-size: 0.92rem; color: var(--ink-2); }
-	.foot { margin-top: 40px; border-top: 1px solid var(--rule); padding-top: 14px; color: var(--ink-2); }
+	.note { border-left: 3px solid var(--accent); background: var(--surface); border-radius: 0 10px 10px 0; padding: 12px 18px; margin: 22px 0; font-size: 0.92rem; color: var(--ink-2); }
+	.foot { margin-top: 40px; border-top: 1px solid var(--line); padding-top: 14px; color: var(--ink-2); }
 	@media (max-width: 520px) {
 		.flow { flex-direction: column; }
 		.barrier { padding: 8px 0; }
-		.barrier::before { top: auto; bottom: auto; left: 10%; right: 10%; height: 3px; width: auto; background: repeating-linear-gradient(90deg, var(--bad), var(--bad) 6px, transparent 6px, transparent 12px); }
+		.barrier::before { top: auto; bottom: auto; left: 10%; right: 10%; height: 3px; width: auto; background: repeating-linear-gradient(90deg, var(--danger), var(--danger) 6px, transparent 6px, transparent 12px); }
 		.barrier span { writing-mode: horizontal-tb; transform: none; }
 	}
 </style>

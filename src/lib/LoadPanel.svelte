@@ -45,7 +45,7 @@
 		display: flex;
 		gap: 16px;
 		align-items: center;
-		background: var(--card);
+		background: var(--surface);
 		border: 1px solid var(--accent);
 		border-radius: 12px;
 		padding: 18px 20px;

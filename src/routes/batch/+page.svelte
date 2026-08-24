@@ -324,7 +324,7 @@
 		font-size: 0.82rem;
 		padding: 5px 14px;
 		border-radius: 999px;
-		border: 1px solid var(--rule);
+		border: 1px solid var(--line);
 		color: var(--ink-2);
 		cursor: pointer;
 	}
@@ -344,8 +344,8 @@
 		font-size: 0.82rem;
 		padding: 4px 12px;
 		border-radius: 999px;
-		border: 1px solid var(--rule);
-		background: var(--card);
+		border: 1px solid var(--line);
+		background: var(--surface);
 		color: var(--ink-2);
 		margin: 6px 0 18px;
 	}
@@ -355,8 +355,8 @@
 		color: var(--accent);
 	}
 	.card {
-		background: var(--card);
-		border: 1px solid var(--rule);
+		background: var(--surface);
+		border: 1px solid var(--line);
 		border-radius: 12px;
 		padding: 20px 22px;
 		margin: 10px 0;
@@ -398,7 +398,7 @@
 		font-size: 0.82rem;
 		padding: 5px 14px;
 		border-radius: 999px;
-		border: 1px solid var(--rule);
+		border: 1px solid var(--line);
 		background: transparent;
 		color: var(--ink-2);
 		cursor: pointer;
@@ -444,7 +444,7 @@
 	.col {
 		font-size: 0.86rem;
 		padding: 5px 12px;
-		border: 1px solid var(--rule);
+		border: 1px solid var(--line);
 		border-radius: 999px;
 		cursor: pointer;
 		color: var(--ink-2);
@@ -456,7 +456,7 @@
 	}
 	.tablewrap {
 		overflow-x: auto;
-		border: 1px solid var(--rule);
+		border: 1px solid var(--line);
 		border-radius: 8px;
 		margin: 8px 0 14px;
 	}
@@ -468,7 +468,7 @@
 	th,
 	td {
 		padding: 6px 10px;
-		border-bottom: 1px solid var(--rule);
+		border-bottom: 1px solid var(--line);
 		white-space: nowrap;
 		text-align: left;
 		max-width: 34ch;
@@ -510,7 +510,7 @@
 	.progress {
 		height: 10px;
 		border-radius: 999px;
-		background: var(--rule);
+		background: var(--line);
 		overflow: hidden;
 		margin: 8px 0 6px;
 	}
@@ -531,7 +531,7 @@
 	}
 	footer {
 		margin-top: 40px;
-		border-top: 1px solid var(--rule);
+		border-top: 1px solid var(--line);
 		padding-top: 12px;
 		font-size: 0.86rem;
 		color: var(--ink-2);

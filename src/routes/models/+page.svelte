@@ -110,26 +110,26 @@
 	}
 	.eyebrow { font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin: 0; }
 	h1 { margin: 8px 0 0; font-size: 2.2rem; line-height: 1.1; letter-spacing: -0.01em; }
-	h2 { font-size: 1.4rem; margin: 46px 0 12px; padding-top: 22px; border-top: 1px solid var(--rule); }
+	h2 { font-size: 1.4rem; margin: 46px 0 12px; padding-top: 22px; border-top: 1px solid var(--line); }
 	h3 { margin: 4px 0 6px; font-size: 1.1rem; }
 	.lede { color: var(--ink-2); }
 	a { color: var(--accent); }
 	.mono { font-family: var(--font-mono); font-size: 0.92em; }
 	.s { font-size: 0.76rem; color: var(--ink-3); }
-	.tablewrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: 12px; background: var(--card); margin: 18px 0 6px; }
+	.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); margin: 18px 0 6px; }
 	table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
-	th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--rule); vertical-align: top; }
+	th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
 	th { font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-3); }
 	td.n, th.n { font-variant-numeric: tabular-nums; }
 	tr:last-child td { border-bottom: none; }
 	.fn { font-size: 0.8rem; color: var(--ink-3); }
 	.cards { display: grid; gap: 14px; margin: 14px 0; }
-	.card { background: var(--card); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px; }
+	.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; }
 	.card p { margin: 0; font-size: 0.94rem; }
 	.pin { display: inline-block; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); padding: 3px 10px; border-radius: 999px; margin-bottom: 8px; }
 	.pick { padding-left: 18px; }
 	.pick li { margin: 8px 0; }
 	.pick b { color: var(--accent); }
-	.note { border-left: 3px solid var(--accent); background: var(--card); border-radius: 0 10px 10px 0; padding: 12px 18px; margin: 20px 0; font-size: 0.92rem; color: var(--ink-2); }
-	.foot { margin-top: 40px; border-top: 1px solid var(--rule); padding-top: 14px; color: var(--ink-2); }
+	.note { border-left: 3px solid var(--accent); background: var(--surface); border-radius: 0 10px 10px 0; padding: 12px 18px; margin: 20px 0; font-size: 0.92rem; color: var(--ink-2); }
+	.foot { margin-top: 40px; border-top: 1px solid var(--line); padding-top: 14px; color: var(--ink-2); }
 </style>

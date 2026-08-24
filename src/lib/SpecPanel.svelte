@@ -64,8 +64,8 @@
 
 <style>
 	.wrap {
-		background: var(--card);
-		border: 1px solid var(--rule);
+		background: var(--surface);
+		border: 1px solid var(--line);
 		border-radius: 12px;
 		padding: 14px 16px;
 		margin: 12px 0 6px;
@@ -107,13 +107,13 @@
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(94px, 1fr));
 		gap: 1px;
-		background: var(--rule);
-		border: 1px solid var(--rule);
+		background: var(--line);
+		border: 1px solid var(--line);
 		border-radius: 8px;
 		overflow: hidden;
 	}
 	.cell {
-		background: var(--card);
+		background: var(--surface);
 		padding: 10px 12px;
 	}
 	.v {
@@ -140,7 +140,7 @@
 		gap: 16px;
 		margin-top: 12px;
 		padding-top: 10px;
-		border-top: 1px dashed var(--rule);
+		border-top: 1px dashed var(--line);
 		font-size: 0.82rem;
 		color: var(--ink-2);
 		font-variant-numeric: tabular-nums;
