@@ -182,7 +182,7 @@
 
 <svelte:head><title>Batch CSV Redactor</title></svelte:head>
 
-<main>
+<div class="page">
 	<p class="eyebrow">batch mode · nothing leaves this machine</p>
 	<h1>Batch CSV Redactor</h1>
 	<p class="lede">
@@ -287,44 +287,14 @@
 			production <span class="mono">nordic-v14</span> model.
 		</p>
 	</footer>
-</main>
+</div>
 
 <style>
-	:root {
-		--paper: #f2f4f1;
-		--card: #ffffff;
-		--ink: #171a18;
-		--ink-2: #4a544d;
-		--ink-3: #79837c;
-		--rule: #d8ddd8;
-		--accent: #188a4f;
-		--accent-soft: #e2f0e7;
-	}
-	@media (prefers-color-scheme: dark) {
-		:root {
-			--paper: #151815;
-			--card: #1f2420;
-			--ink: #e8ece8;
-			--ink-2: #aeb8b0;
-			--ink-3: #7e8880;
-			--rule: #2e352f;
-			--accent: #2fa067;
-			--accent-soft: #1c3227;
-		}
-	}
-	:global(body) {
-		margin: 0;
-		background: var(--paper);
-		color: var(--ink);
-		font: 16px/1.6 system-ui, sans-serif;
-	}
-	main {
-		max-width: 78ch;
-		margin: 0 auto;
-		padding: 48px 20px 80px;
+	div.page {
+		gap: var(--s-5);
 	}
 	.eyebrow {
-		font-family: ui-monospace, monospace;
+		font-family: var(--font-mono);
 		font-size: 0.72rem;
 		letter-spacing: 0.1em;
 		text-transform: uppercase;
@@ -404,7 +374,9 @@
 		opacity: 0;
 	}
 	.filebtn {
-		font: 600 0.95rem system-ui, sans-serif;
+		font-weight: 600;
+		font-size: 0.95rem;
+		font-family: var(--font-sans);
 		padding: 10px 22px;
 		border-radius: 999px;
 		background: var(--accent);
@@ -516,7 +488,9 @@
 		border-bottom: none;
 	}
 	.go {
-		font: 600 0.95rem system-ui, sans-serif;
+		font-weight: 600;
+		font-size: 0.95rem;
+		font-family: var(--font-sans);
 		padding: 10px 24px;
 		border-radius: 999px;
 		border: none;
@@ -563,7 +537,7 @@
 		color: var(--ink-2);
 	}
 	.mono {
-		font-family: ui-monospace, monospace;
+		font-family: var(--font-mono);
 		font-size: 0.94em;
 	}
 </style>

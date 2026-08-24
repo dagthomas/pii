@@ -1,6 +1,6 @@
 <svelte:head><title>The models · Nordic PII</title></svelte:head>
 
-<main>
+<div class="page">
 	<p class="eyebrow">the models</p>
 	<h1>Three tools, one training pipeline</h1>
 	<p class="lede">
@@ -102,28 +102,19 @@
 		Curious how the in-browser models run with zero data leaving your machine?
 		<a href="/how-it-works">How it works →</a>
 	</p>
-</main>
+</div>
 
 <style>
-	:root {
-		--paper: #f2f4f1; --card: #fff; --ink: #171a18; --ink-2: #4a544d; --ink-3: #79837c;
-		--rule: #d8ddd8; --accent: #188a4f; --accent-soft: #e2f0e7;
+	div.page {
+		gap: var(--s-5);
 	}
-	@media (prefers-color-scheme: dark) {
-		:root {
-			--paper: #151815; --card: #1f2420; --ink: #e8ece8; --ink-2: #aeb8b0; --ink-3: #7e8880;
-			--rule: #2e352f; --accent: #2fa067; --accent-soft: #1c3227;
-		}
-	}
-	:global(body) { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.6 system-ui, sans-serif; }
-	main { max-width: 74ch; margin: 0 auto; padding: 48px 20px 90px; }
-	.eyebrow { font-family: ui-monospace, monospace; font-size: 0.74rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin: 0; }
+	.eyebrow { font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin: 0; }
 	h1 { margin: 8px 0 0; font-size: 2.2rem; line-height: 1.1; letter-spacing: -0.01em; }
 	h2 { font-size: 1.4rem; margin: 46px 0 12px; padding-top: 22px; border-top: 1px solid var(--rule); }
 	h3 { margin: 4px 0 6px; font-size: 1.1rem; }
 	.lede { color: var(--ink-2); }
 	a { color: var(--accent); }
-	.mono { font-family: ui-monospace, monospace; font-size: 0.92em; }
+	.mono { font-family: var(--font-mono); font-size: 0.92em; }
 	.s { font-size: 0.76rem; color: var(--ink-3); }
 	.tablewrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: 12px; background: var(--card); margin: 18px 0 6px; }
 	table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }

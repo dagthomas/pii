@@ -71,7 +71,7 @@
 		margin: 12px 0 6px;
 	}
 	.hd {
-		font-family: ui-monospace, monospace;
+		font-family: var(--font-mono);
 		font-size: 0.74rem;
 		letter-spacing: 0.04em;
 		color: var(--ink-3);
@@ -117,7 +117,7 @@
 		padding: 10px 12px;
 	}
 	.v {
-		font-family: 'Bricolage Grotesque', ui-monospace, monospace;
+		font-family: var(--font-mono);
 		font-weight: 700;
 		font-size: 1.3rem;
 		line-height: 1.05;
@@ -147,6 +147,6 @@
 	}
 	.live-row b {
 		color: var(--ink);
-		font-family: ui-monospace, monospace;
+		font-family: var(--font-mono);
 	}
 </style>

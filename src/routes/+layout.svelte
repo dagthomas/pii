@@ -1,59 +1,149 @@
 <script lang="ts">
+	import '../app.css';
 	import { page } from '$app/state';
 	import favicon from '$lib/assets/favicon.svg';
+	import ThemeToggle from '$lib/ThemeToggle.svelte';
 
 	let { children } = $props();
 
-	const isHome = $derived(page.url.pathname === '/');
+	const NAV = [
+		{ href: '/', label: 'Redact' },
+		{ href: '/batch', label: 'Batch' },
+		{ href: '/models', label: 'Models' },
+		{ href: '/how-it-works', label: 'How it works' }
+	];
+
+	const current = $derived(page.url.pathname);
 </script>
 
-<svelte:head>
-	<link rel="icon" href={favicon} />
-</svelte:head>
+<svelte:head><link rel="icon" href={favicon} /></svelte:head>
 
-{#if !isHome}
-	<a class="back" href="/">
-		<span aria-hidden="true">←</span> Back to the redactor
-	</a>
-{/if}
+<a class="skip" href="#main">Skip to content</a>
 
-{@render children()}
+<header>
+	<div class="bar">
+		<a class="brand" href="/">
+			<span class="dot" aria-hidden="true"></span>
+			<span class="name">Nordic PII</span>
+		</a>
+
+		<nav aria-label="Sections">
+			{#each NAV as item (item.href)}
+				<a
+					href={item.href}
+					class={['link', { on: current === item.href }]}
+					aria-current={current === item.href ? 'page' : undefined}>{item.label}</a
+				>
+			{/each}
+		</nav>
+
+		<ThemeToggle />
+	</div>
+</header>
+
+<main id="main">
+	{@render children()}
+</main>
+
+<footer>
+	<p>Runs entirely in your browser. No text is uploaded.</p>
+</footer>
 
 <style>
-	.back {
+	.skip {
+		position: absolute;
+		left: -9999px;
+		top: var(--s-2);
+		z-index: 20;
+		background: var(--surface);
+		border: 1px solid var(--line);
+		border-radius: var(--radius);
+		padding: var(--s-2) var(--s-4);
+	}
+	.skip:focus {
+		left: var(--s-4);
+	}
+
+	header {
 		position: sticky;
-		top: 12px;
+		top: 0;
 		z-index: 10;
-		float: left;
-		margin: 12px 0 0 12px;
+		background: color-mix(in srgb, var(--paper) 88%, transparent);
+		backdrop-filter: blur(10px);
+		border-bottom: 1px solid var(--line);
+	}
+	.bar {
+		max-width: var(--container);
+		margin: 0 auto;
+		padding: var(--s-3) var(--s-5);
+		display: flex;
+		align-items: center;
+		gap: var(--s-5);
+	}
+
+	.brand {
 		display: inline-flex;
 		align-items: center;
-		gap: 8px;
-		font: 500 0.85rem/1 system-ui, sans-serif;
-		padding: 9px 16px;
-		border-radius: 999px;
-		border: 1px solid var(--rule, #d8ddd8);
-		background: var(--card, #fff);
-		color: var(--ink-2, #4a544d);
+		gap: var(--s-2);
+		color: var(--ink);
 		text-decoration: none;
-		box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+		font-weight: 600;
+		letter-spacing: -0.01em;
+		white-space: nowrap;
 	}
-	.back:hover {
-		border-color: var(--accent, #188a4f);
-		color: var(--accent, #188a4f);
+	.dot {
+		width: 9px;
+		height: 9px;
+		border-radius: 50%;
+		background: var(--accent);
 	}
-	.back:focus-visible {
-		outline: 2px solid var(--accent, #188a4f);
-		outline-offset: 2px;
+
+	nav {
+		display: flex;
+		gap: var(--s-1);
+		margin-right: auto;
+		overflow-x: auto;
+		scrollbar-width: none;
 	}
-	/* On narrow screens it sits in the flow above the page instead of beside it. */
-	@media (max-width: 900px) {
-		.back {
-			position: static;
-			float: none;
-			display: flex;
-			width: fit-content;
-			margin: 16px 0 -20px 20px;
+	nav::-webkit-scrollbar {
+		display: none;
+	}
+	.link {
+		padding: 6px var(--s-3);
+		border-radius: var(--radius-pill);
+		color: var(--ink-3);
+		text-decoration: none;
+		font-size: var(--step--1);
+		font-weight: 500;
+		white-space: nowrap;
+		transition: color 0.12s ease, background-color 0.12s ease;
+	}
+	.link:hover {
+		color: var(--ink);
+		background: var(--surface-2);
+	}
+	.link.on {
+		color: var(--accent);
+		background: var(--accent-soft);
+	}
+
+	footer {
+		max-width: var(--container);
+		margin: 0 auto;
+		padding: var(--s-5) var(--s-5) var(--s-7);
+		border-top: 1px solid var(--line);
+		color: var(--ink-3);
+		font-size: var(--step--1);
+	}
+
+	/* The brand word is redundant next to the nav on a narrow screen */
+	@media (max-width: 560px) {
+		.bar {
+			gap: var(--s-3);
+			padding-inline: var(--s-4);
+		}
+		.name {
+			display: none;
 		}
 	}
 </style>
