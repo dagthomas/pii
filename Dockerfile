@@ -8,7 +8,7 @@ COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
 # Hugging Face repo hosting the ONNX model (worker appends ".data" for the weights file).
-ARG VITE_MODEL_URL="https://huggingface.co/dagthomas/nordicpii/resolve/main/nordic-v9-web.onnx"
+ARG VITE_MODEL_URL="https://huggingface.co/dagthomas/nordicpii/resolve/main/nordic-v14-web.onnx"
 ENV VITE_MODEL_URL=${VITE_MODEL_URL}
 RUN npm run build && npm prune --omit=dev
 

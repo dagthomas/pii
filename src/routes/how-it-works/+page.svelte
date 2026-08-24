@@ -18,7 +18,7 @@
 
 	<h2>How a redaction actually happens</h2>
 	<ol class="steps">
-		<li><b>Download the model once.</b> On first use, the browser fetches the model file (135 MB for nordic-ner, ~1.9 GB for nordic-v9) and stores it in its local cache. Later visits reuse it — no re-download.</li>
+		<li><b>Download the model once.</b> On first use, the browser fetches the model file (135 MB for nordic-ner, ~1.9 GB for nordic-v14) and stores it in its local cache. Later visits reuse it — no re-download.</li>
 		<li><b>Tokenise, in-page.</b> Your text is split into tokens by a tokenizer running in a background Web Worker. The text never leaves that worker.</li>
 		<li><b>Run on your GPU.</b> The model executes via <span class="mono">WebGPU</span> — the browser's direct line to your graphics card — or falls back to <span class="mono">WebAssembly</span> on the CPU. Same maths a server would do, on your silicon.</li>
 		<li><b>Redact and show.</b> The model labels each token as a person, phone, ID, etc.; those spans are blacked out and rendered. Nothing was transmitted at any step.</li>

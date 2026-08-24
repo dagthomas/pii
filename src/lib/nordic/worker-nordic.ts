@@ -1,5 +1,5 @@
 /// <reference lib="webworker" />
-/** nordic-v9 in the browser: onnxruntime-web session + o200k tokenizer + BIOES decode.
+/** nordic-v14 in the browser: onnxruntime-web session + o200k tokenizer + BIOES decode.
  *  Tries WebGPU, falls back to WASM. The model file is fetched with progress reporting. */
 import * as ort from 'onnxruntime-web';
 import { Tiktoken } from 'js-tiktoken/lite';
@@ -8,14 +8,14 @@ import { stitchSpans } from './labels';
 
 ort.env.wasm.wasmPaths = '/ort/';
 
-const MODEL_URL: string = (import.meta.env.VITE_MODEL_URL as string || '/models/nordic-v9-web.onnx');
+const MODEL_URL: string = (import.meta.env.VITE_MODEL_URL as string || '/models/nordic-v14-web.onnx');
 const MAX_TOKENS = 1024;
 
 let session: ort.InferenceSession | null = null;
 let enc: Tiktoken | null = null;
 
 let downloadedMb = 0;
-const KNOWN_TOTAL_MB = 1845; // nordic-v9-web.onnx + .data — fallback when the host omits Content-Length (e.g. HF redirects)
+const KNOWN_TOTAL_MB = 1845; // nordic-v14-web.onnx + .data — fallback when the host omits Content-Length (e.g. HF redirects)
 
 async function fetchWithProgress(url: string, totalAllMb: number): Promise<Uint8Array | null> {
 	const res = await fetch(url);
@@ -56,7 +56,7 @@ async function contentMb(url: string): Promise<number> {
 	}
 }
 
-const CACHE_NAME = 'nordic-v9-model-v1';
+const CACHE_NAME = 'nordic-v14-model-v1';
 
 /** Cache Storage persists multi-GB across sessions (HTTP cache rejects a 1.8 GB file).
  *  Returns the cached bytes if present, else fetches with progress and stores them. */

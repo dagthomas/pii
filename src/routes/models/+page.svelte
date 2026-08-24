@@ -15,10 +15,10 @@
 			</thead>
 			<tbody>
 				<tr>
-					<td><b>nordic-v9</b><br /><span class="s">flagship</span></td>
+					<td><b>nordic-v14</b><br /><span class="s">flagship</span></td>
 					<td>OpenAI <span class="mono">privacy-filter</span> (1.4B MoE)</td>
 					<td class="n">1.84 GB<br /><span class="s">951 MB server</span></td>
-					<td class="n">F1 0.86–0.93<br /><span class="s">weaker lowercased</span></td>
+					<td class="n">F1 0.93<br /><span class="s">0.91 lowercased</span></td>
 					<td>Server (CPU/GPU) · browser (WebGPU)</td>
 				</tr>
 				<tr>
@@ -57,7 +57,7 @@
 		</div>
 		<div class="card">
 			<div class="pin">Best for maximum accuracy</div>
-			<h3>nordic-v9</h3>
+			<h3>nordic-v14</h3>
 			<p>
 				The 1.4B flagship, fine-tuned from OpenAI's privacy-filter. Most robust on the hardest cases —
 				first names mid-sentence, unusual formats, tricky prose. Use it in the <strong>server pipeline</strong>
@@ -81,22 +81,21 @@
 	<h2>The short version</h2>
 	<ul class="pick">
 		<li><strong>Cleaning a CSV/Excel export on your own machine?</strong> → <b>nordic-ner</b> (fast, local, all nine types).</li>
-		<li><strong>Scrubbing text in a server pipeline before an LLM?</strong> → <b>nordic-v9</b> on the server.</li>
+		<li><strong>Scrubbing text in a server pipeline before an LLM?</strong> → <b>nordic-v14</b> on the server.</li>
 		<li><strong>Need certainty on IDs, phones, IBANs?</strong> → <b>checksum detectors</b> — always running under both.</li>
-		<li><strong>Want the best detection with zero infrastructure?</strong> → <b>nordic-v9</b> in the browser (WebGPU).</li>
+		<li><strong>Want the best detection with zero infrastructure?</strong> → <b>nordic-v14</b> in the browser (WebGPU).</li>
 	</ul>
 
 	<div class="note">
-		<strong>Honest caveat on the numbers.</strong> The held-out sets contain
-		<strong>no address, url or secret spans at all</strong> — so these scores really cover the six
-		types that do appear (person, phone, e-mail, national id, account number, date). Address
-		accuracy is only measured on held-out <em>synthetic</em> text, where the case-augmented retrain
-		took lowercase addresses from 0.41 to 0.99. nordic-ner's figure is measured at token-span
-		granularity; nordic-v9's 0.86–0.93 are character-exact spans on (partly different) blind sets,
-		and nordic-v9 has <em>not</em> had the case-augmented retrain yet, so it is still the weaker of
-		the two on lowercase input. The small model is
-		genuinely strong — remarkably so for its size — but the 1.4B flagship remains more robust on the messiest
-		real-world prose. Both were validated only on text they never trained on.
+		<strong>Honest caveat on the numbers.</strong> The held-out sets of real text contain
+		<strong>no address, url or secret spans at all</strong> — so the headline figures really cover the
+		six types that do appear (person, phone, e-mail, national id, account number, date). Addresses are
+		measured separately, on generated text using <strong>real Norwegian street names held out of
+		training</strong> (from Difi's public postal register): there the flagship scores
+		<b>0.99</b> on addresses as written and <b>1.00</b> lowercased, up from 0.95 / 0.48 before the
+		case-augmented retrain. The two models are scored at different granularities — nordic-ner at
+		token-span, the flagship character-exact — so treat the columns as ballpark rather than a
+		head-to-head. Both were validated only on text they never trained on.
 	</div>
 
 	<p class="foot">

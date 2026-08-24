@@ -132,7 +132,7 @@
 
 	<div class="engines" role="radiogroup" aria-label="Detection engine">
 		<label class={['engchip', { on: mode === 'fast' }]}><input type="radio" bind:group={mode} value="fast" /> nordic-ner · our small model + checksums</label>
-		<label class={['engchip', { on: mode === 'nordic' }]}><input type="radio" bind:group={mode} value="nordic" /> nordic-v9 · the real model (~1.9 GB, downloads once)</label>
+		<label class={['engchip', { on: mode === 'nordic' }]}><input type="radio" bind:group={mode} value="nordic" /> nordic-v14 · the real model (~1.9 GB, downloads once)</label>
 	</div>
 
 	<div class="status" data-state={engine.status}>{statusText}{#if engine.lastMs !== null}<span class="ms"> · last inference {engine.lastMs} ms</span>{/if}</div>
@@ -182,7 +182,7 @@
 				Hover a bar to see the category and which detector fired. Copying from this box gives
 				you <span class="mono">&lt;PERSON&gt;</span>-style placeholders, never the hidden text.
 				Company org numbers and switchboards are deliberately left alone.{#if mode === 'nordic' && nordic.truncated}
-					<strong>Input was longer than nordic-v9's 1,024-token window; only the first part was analysed.</strong>{/if}
+					<strong>Input was longer than nordic-v14's 1,024-token window; only the first part was analysed.</strong>{/if}
 			</p>
 		</section>
 	{/if}
@@ -197,7 +197,7 @@
 			fully in your browser: ideal for redacting CSV/Excel exports locally without sending anything out.
 		</p>
 		<p>
-			<strong><span class="mono">nordic-v9</span> is the production model itself</strong> — a custom
+			<strong><span class="mono">nordic-v14</span> is the production model itself</strong> — a custom
 			1.4B mixture-of-experts network <strong>fine-tuned from
 			<a href="https://huggingface.co/openai/privacy-filter" target="_blank" rel="noopener">OpenAI's
 			privacy-filter</a></strong> on Nordic HR/support text, exported to ONNX with int8 expert weights

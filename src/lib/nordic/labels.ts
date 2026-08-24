@@ -1,4 +1,4 @@
-/** nordic-v9 label space (order = model output channels) + BIOES span assembly. */
+/** nordic-v14 label space (order = model output channels) + BIOES span assembly. */
 import type { Span } from '../detectors';
 
 export const NER_CLASS_NAMES = [

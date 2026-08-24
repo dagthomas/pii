@@ -41,7 +41,7 @@
 <div class="wrap">
 	<div class="hd">
 		<span class="dot" class:live={engine.status === 'ready'}></span>
-		{isNordic ? 'nordic-v9' : 'fast engine'} · running on {deviceLabel}
+		{isNordic ? 'nordic-v14' : 'fast engine'} · running on {deviceLabel}
 	</div>
 	<div class="grid">
 		{#each specs as s (s.k)}

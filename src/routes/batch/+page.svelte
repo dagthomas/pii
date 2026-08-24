@@ -192,7 +192,7 @@
 
 	<div class="engines" role="radiogroup" aria-label="Detection engine">
 		<label class={['engchip', { on: mode === 'fast' }]}><input type="radio" bind:group={mode} value="fast" /> nordic-ner · our small model + checksums</label>
-		<label class={['engchip', { on: mode === 'nordic' }]}><input type="radio" bind:group={mode} value="nordic" /> nordic-v9 · the real model (~1.9 GB, downloads once)</label>
+		<label class={['engchip', { on: mode === 'nordic' }]}><input type="radio" bind:group={mode} value="nordic" /> nordic-v14 · the real model (~1.9 GB, downloads once)</label>
 	</div>
 
 	<div class="status" data-state={engine.status}>{statusText}</div>
@@ -284,7 +284,7 @@
 			Same detectors as the <a href="/">single-text demo</a>: an in-browser NER model for names plus
 			exact checksum validators (fødselsnummer, personnummer, IBAN, cards) and the production label
 			policy — org numbers, switchboards and role mailboxes stay untouched. Concept demo, not the
-			production <span class="mono">nordic-v9</span> model.
+			production <span class="mono">nordic-v14</span> model.
 		</p>
 	</footer>
 </main>

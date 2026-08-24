@@ -1,4 +1,4 @@
-/** The real nordic-v9 model, in-browser via onnxruntime-web. Same surface as RedactorEngine. */
+/** The real nordic-v14 model, in-browser via onnxruntime-web. Same surface as RedactorEngine. */
 import { detectStructured, mergeSpans, type Span } from '../detectors';
 
 export class NordicEngine {
@@ -36,7 +36,7 @@ export class NordicEngine {
 				this.phase = 'download';
 				this.pct = m.pct;
 				this.mb = m.mb;
-				this.progress = `downloading nordic-v9 · ${m.pct}% (${m.mb} MB)`;
+				this.progress = `downloading nordic-v14 · ${m.pct}% (${m.mb} MB)`;
 			} else if (m.type === 'preparing') {
 				this.phase = 'prepare';
 				this.pct = null;
